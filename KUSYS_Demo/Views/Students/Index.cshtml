@@ -1,0 +1,98 @@
+﻿@model IEnumerable<KUSYS_Demo.Models.Student>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BirthDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BirthDate)
+            </td>
+            <td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.StudentId">Edit</a> 
+                        <a asp-action="Delete" asp-route-id="@item.StudentId">Delete</a>  
+                        <button type="button" class="btn btn-info" onclick="GetDetails(@item.StudentId);">Details</button>
+                    }
+            
+                
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+                <div class="modal fade" id="DetailModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close d-flex align-items-center justify-content-center" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" class="ion-ios-close"></span>
+                </button>
+            </div>
+            <div class="modal-body p-4 p-md-5">
+                <div id="detailDiv">
+
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/popper.js"></script>
+
+<script>
+    function GetDetails(s_id) { 
+       
+        debugger;
+        $.ajax({
+            method: "Get",
+            url: "/Students/Details",
+            data: { id: s_id },
+            
+        }).done(function(data) {
+            debugger;
+            if (data.failed) {
+                alert(data.message);
+            }
+            else {
+                $("#DetailModal").modal('show');
+                $("#detailDiv").html(data);
+            }
+        }).always(function() {       
+        });
+    }
+</script>
